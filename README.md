@@ -4508,5 +4508,4819 @@ and
 Operational Efficiency
 Neither should be sacrificed merely for convenience.
 
+# Security
+
+Security is a foundational requirement of RTIQA.
+
+The platform is expected to handle educational, institutional, administrative,
+and potentially sensitive information.
+
+Security must therefore be considered throughout the complete system
+lifecycle:
+
+- Design
+- Development
+- Testing
+- Deployment
+- Operation
+- Monitoring
+- Maintenance
+- Incident response
+- Decommissioning
+
+RTIQA follows a defense-in-depth approach.
+
+No single security mechanism should be treated as sufficient protection for
+the entire platform.
+
+---
+
+# Security by Design
+
+Security requirements should be incorporated into architecture and product
+decisions from the beginning.
+
+Security considerations apply to:
+
+- Authentication
+- Authorization
+- Multi-tenancy
+- APIs
+- Databases
+- File storage
+- Mobile applications
+- Web applications
+- Offline storage
+- Synchronization
+- AI services
+- Search
+- Integrations
+- Infrastructure
+- Backups
+- Logging
+- Monitoring
+
+---
+
+# Security Objectives
+
+RTIQA security architecture is intended to protect:
+
+### Confidentiality
+
+Only authorized users and services should access protected information.
+
+### Integrity
+
+Unauthorized or invalid modifications should be prevented or detected.
+
+### Availability
+
+Core educational services should remain available and recoverable.
+
+### Accountability
+
+Important actions should be attributable to the appropriate identity or
+service.
+
+---
+
+# Threat Modeling
+
+Security-sensitive components should undergo threat modeling.
+
+Potential threats include:
+
+- Unauthorized access
+- Credential theft
+- Privilege escalation
+- Cross-tenant data access
+- API abuse
+- Injection attacks
+- Session theft
+- Malicious file uploads
+- Data leakage
+- Insecure integrations
+- Compromised devices
+- Offline data extraction
+- Supply-chain vulnerabilities
+- AI prompt injection
+- AI data leakage
+- Denial-of-service attacks
+
+Threat models should evolve as the architecture evolves.
+
+---
+
+# Authentication
+
+Authentication establishes the identity of a user or service.
+
+Potential authentication mechanisms include:
+
+- Email and password
+- Username and password
+- OAuth
+- OpenID Connect
+- Enterprise identity providers
+- Single Sign-On
+- Passwordless authentication
+- Multi-Factor Authentication
+
+The exact authentication methods enabled by a deployment may vary.
+
+---
+
+# Password Security
+
+If password-based authentication is supported, passwords should:
+
+- Never be stored in plaintext.
+- Be stored using an appropriate password hashing algorithm.
+- Be protected against brute-force attacks.
+- Support secure password reset.
+- Support account recovery controls.
+- Follow appropriate password policy requirements.
+
+The platform should avoid unnecessary password complexity rules that harm
+usability without materially improving security.
+
+---
+
+# Multi-Factor Authentication
+
+Multi-Factor Authentication (MFA) may provide an additional layer of
+protection for accounts.
+
+Potential methods include:
+
+- Authenticator applications
+- Security keys
+- Passkeys
+- Email-based verification where appropriate
+- Other approved authentication factors
+
+MFA requirements may vary according to:
+
+- User role
+- Organization policy
+- Deployment model
+- Risk level
+
+---
+
+# Session Security
+
+Authenticated sessions should have appropriate security controls.
+
+Potential controls include:
+
+- Secure session tokens
+- Token expiration
+- Refresh token rotation
+- Revocation
+- Device/session management
+- Secure cookie configuration
+- Protection against session fixation
+- Protection against token replay
+
+---
+
+# Device and Session Management
+
+Users may eventually be able to view and manage active sessions.
+
+Potential information includes:
+
+- Device
+- Platform
+- Approximate location where appropriate
+- Last activity
+- Session creation
+- Session expiration
+
+Users or administrators may be able to revoke sessions according to their
+permissions.
+
+---
+
+# Authorization
+
+Authentication answers:
+
+> Who are you?
+
+Authorization answers:
+
+> What are you allowed to do?
+
+RTIQA should enforce authorization independently from authentication.
+
+---
+
+# Least Privilege
+
+Users and services should receive only the permissions required to perform
+their responsibilities.
+
+For example:
+
+A teacher should not automatically receive access to institutional financial
+records.
+
+A student should not receive administrative permissions.
+
+An AI service should not receive unrestricted database access.
+
+---
+
+# Role-Based Access Control
+
+RTIQA uses Role-Based Access Control (RBAC) as a core authorization model.
+
+Roles may include:
+
+- Platform Administrator
+- Organization Administrator
+- Principal
+- Academic Administrator
+- Teacher
+- Student
+- Parent / Guardian
+- Accountant
+- HR Manager
+- Librarian
+- Content Manager
+- Support Staff
+
+Roles should be configurable.
+
+---
+
+# Fine-Grained Permissions
+
+Permissions should be defined at the appropriate resource and action level.
+
+Examples:
+
+```text
+student.read
+student.create
+student.update
+
+course.read
+course.create
+course.publish
+
+assessment.create
+assessment.grade
+assessment.publish
+
+finance.invoice.read
+finance.payment.create
+finance.report.read
+The permission system should support future expansion without requiring a complete redesign.
+Relationship-Based Authorization
+Some access decisions depend on relationships rather than roles alone.
+For example:
+A parent may access a student's information because they are an authorized guardian of that student.
+A teacher may access a student's academic information because the student is enrolled in one of the teacher's assigned classes.
+Therefore, authorization may consider:
+Role
+Tenant
+Resource
+Ownership
+Relationship
+Organization policy
+Authorization Enforcement
+Authorization should be enforced server-side.
+Client-side checks are useful for user experience but must never be treated as the security boundary.
+A malicious client should not be able to gain access simply by modifying client-side code or requests.
+API Security
+All APIs should be designed with security as a primary requirement.
+Controls may include:
+Authentication
+Authorization
+Input validation
+Output validation
+Rate limiting
+Request size limits
+Secure headers
+Error handling
+Audit logging
+API versioning
+Input Validation
+External input should never be trusted automatically.
+Validation should be applied to:
+API parameters
+Request bodies
+File metadata
+Query parameters
+User-generated content
+Webhooks
+Integration data
+Validation should occur at appropriate system boundaries.
+Injection Protection
+The platform should protect against common injection classes including:
+SQL injection
+Command injection
+Template injection
+Cross-site scripting
+Header injection
+Other context-specific injection attacks
+Parameterized queries and framework security mechanisms should be preferred over manually constructed queries.
+Cross-Site Scripting
+User-generated content should be treated as untrusted.
+Potential protection mechanisms include:
+Output encoding
+Input sanitization
+Content Security Policy
+Safe rendering
+Restricted HTML
+Trusted content policies
+Cross-Site Request Forgery
+Where cookie-based authentication is used, appropriate CSRF protections should be implemented.
+The selected mechanism should depend on the authentication architecture.
+Rate Limiting
+Rate limits may be applied to:
+Authentication
+Password recovery
+APIs
+AI requests
+Search
+Messaging
+File uploads
+Public endpoints
+Rate limits should be designed to protect services without unnecessarily blocking legitimate educational activity.
+Abuse Prevention
+Public-facing services should consider abuse scenarios such as:
+Automated account creation
+Credential attacks
+Spam
+Excessive API requests
+Malicious uploads
+AI abuse
+Scraping
+Resource exhaustion
+Controls should be proportional to the service.
+File Upload Security
+File uploads can introduce significant security risks.
+Uploaded files should be evaluated for:
+File type
+File size
+Content type
+Malware where appropriate
+Filename safety
+Storage isolation
+Access permissions
+User-provided filenames should not be trusted as filesystem paths.
+Private File Access
+Private files should not be exposed through predictable public URLs.
+Where appropriate, access may use:
+Authorization checks
+Short-lived signed URLs
+Protected API endpoints
+Tenant-aware storage policies
+Database Security
+Database access should follow least privilege.
+Application services should not automatically have unrestricted database permissions.
+Potential controls include:
+Separate service accounts
+Restricted credentials
+Network controls
+Encryption
+Row-Level Security where appropriate
+Database auditing
+Backup protection
+Database Credentials
+Database credentials must:
+Never be committed to source control.
+Be stored securely.
+Be rotated according to operational policy.
+Be different between environments where appropriate.
+Secrets Management
+Secrets may include:
+Database passwords
+API keys
+AI provider keys
+OAuth secrets
+Signing keys
+Encryption keys
+Storage credentials
+Secrets must never be hard-coded into application source code.
+Environment Configuration
+Configuration should distinguish between:
+Development
+Testing
+Staging
+Production
+Production secrets must not be copied into development environments without a documented security requirement.
+Encryption in Transit
+Network communication should use secure transport protocols.
+Examples include:
+HTTPS
+TLS
+Secure database connections
+Secure service-to-service communication
+Plaintext transmission of sensitive information should be avoided.
+Encryption at Rest
+Sensitive data should be protected at rest where appropriate.
+Potential protected data includes:
+Databases
+Backups
+Files
+Offline device data
+Credentials
+Sensitive configuration
+The encryption strategy depends on the deployment environment.
+Key Management
+Encryption keys should be managed separately from encrypted data where practical.
+Potential mechanisms include:
+Cloud key management services
+Hardware-backed keys
+Secret management systems
+Secure key stores
+Keys should have appropriate access controls and rotation procedures.
+Mobile Security
+Mobile applications introduce additional security considerations.
+The platform should consider:
+Secure local storage
+Token protection
+Device permissions
+Screenshot considerations for sensitive screens
+Local database encryption
+App integrity
+Session expiration
+Lost-device scenarios
+Security requirements should be balanced against usability.
+Offline Security
+Offline-first functionality introduces unique security challenges.
+Potential risks include:
+Device theft
+Local database extraction
+Outdated permissions
+Replay of synchronization operations
+Manipulated local data
+Unauthorized offline sessions
+Controls may include:
+Encrypted local databases
+Secure key storage
+Session expiration
+Server-side validation
+Signed operations
+Synchronization integrity checks
+Data expiration
+Synchronization Security
+Synchronization requests should be authenticated and authorized.
+The server should validate:
+User
+Tenant
+Device/session
+Operation
+Entity
+Permission
+Version
+Integrity
+The client should never be trusted to determine whether a synchronization operation is authorized.
+Replay Protection
+Where sensitive operations can be replayed, the platform should use appropriate mechanisms such as:
+Idempotency keys
+Operation identifiers
+Sequence numbers
+Timestamps
+Nonces
+Server-side validation
+The exact mechanism depends on the operation.
+Audit Logging
+Important security and administrative events should be auditable.
+Examples include:
+Login
+Logout
+Authentication failures
+Password changes
+MFA changes
+Role changes
+Permission changes
+Data exports
+Sensitive record access
+Financial operations
+Content publication
+Certificate issuance
+Administrative configuration changes
+Audit Log Integrity
+Audit logs should be protected against unauthorized modification.
+Where appropriate:
+Write access should be restricted.
+Logs should be retained according to policy.
+Critical events may be forwarded to separate storage.
+Log access should itself be auditable.
+Privacy
+RTIQA may process information belonging to:
+Students
+Parents
+Teachers
+Employees
+Institutions
+Administrators
+Privacy must therefore be incorporated into product and architecture decisions.
+Data Minimization
+The platform should collect and process only information required for the specific purpose.
+Avoid collecting personal information merely because it might become useful in the future.
+Purpose Limitation
+Data should be used for clearly defined purposes.
+For example:
+Student attendance data should not automatically become available to an unrelated system simply because both systems use the same database.
+Access Transparency
+Organizations should be able to understand:
+What information is stored.
+Why it is stored.
+Which users can access it.
+Which services process it.
+Where it is stored.
+How long it is retained where applicable.
+Data Retention
+Different categories of information may require different retention periods.
+Retention policies may apply to:
+Student records
+Financial records
+Audit logs
+Messages
+Files
+AI interactions
+Analytics
+Backups
+The platform should support configurable retention policies where required.
+Data Deletion
+Deletion must consider:
+Legal requirements
+Institutional policies
+Data dependencies
+Audit requirements
+Backup retention
+Security requirements
+Deleting a visible record does not necessarily mean that every backup copy can be immediately destroyed.
+Retention and deletion behavior should be documented.
+Data Export
+Organizations should have appropriate mechanisms to export their data.
+Potential export categories include:
+Student records
+Teacher records
+Courses
+Content
+Assessments
+Attendance
+Financial information
+Documents
+Configuration
+Exports must be authorized and audited.
+Data Portability
+Data formats should be designed to minimize unnecessary lock-in.
+Where practical, documented and structured formats should be preferred over proprietary representations.
+Privacy in AI
+AI services require additional privacy controls.
+Before sending information to an external AI provider, the system should consider:
+Is the information necessary?
+Is the user authorized?
+Is the provider permitted to process it?
+Can personal information be minimized?
+Can the task be completed without sending sensitive information?
+Is the request logged appropriately?
+AI Prompt Injection
+AI systems connected to institutional data may be exposed to prompt injection.
+For example, a document may contain instructions designed to manipulate an AI system into revealing information.
+RTIQA should treat retrieved content as untrusted data rather than trusted instructions.
+AI Tool Security
+AI agents should receive only explicitly permitted tools.
+For example:
+AI Agent
+   │
+   ├── Search Authorized Course Content
+   ├── Draft Lesson
+   └── Generate Report
+rather than:
+AI Agent
+   │
+   └── Unrestricted Database Access
+AI Authorization
+An AI assistant must operate under the permissions of the appropriate user and context.
+AI must not become a privilege-escalation mechanism.
+Supply Chain Security
+Modern applications depend on external libraries and services.
+RTIQA should therefore monitor:
+Dependencies
+Container images
+Build tools
+Packages
+Third-party integrations
+AI SDKs
+Potential controls include:
+Dependency scanning
+Vulnerability monitoring
+Lockfiles
+Version pinning where appropriate
+Software composition analysis
+Image scanning
+Dependency Management
+Dependencies should be:
+Necessary
+Maintained
+Security-reviewed
+Version controlled
+Auditable
+Unused dependencies should be removed.
+Container Security
+Containers should follow secure defaults.
+Potential practices include:
+Minimal base images
+Non-root execution
+Read-only filesystems where practical
+Limited Linux capabilities
+Resource limits
+Image scanning
+Secret isolation
+Network restrictions
+Infrastructure Security
+Infrastructure should use:
+Firewall controls
+Private networks where appropriate
+Restricted ports
+Secure administrative access
+Key-based authentication
+Monitoring
+Patch management
+Backup procedures
+Server Access
+Administrative server access should be restricted.
+Potential controls include:
+SSH keys
+MFA for administrative systems
+VPN or private networking
+IP restrictions where appropriate
+Bastion hosts
+Audit logs
+Passwords should not be the primary mechanism for privileged server access when stronger alternatives are available.
+Production Access
+Production access should follow least privilege.
+Not every developer should have unrestricted production access.
+Where practical:
+Development
+Staging
+Production
+should have distinct access boundaries.
+Security Monitoring
+Security monitoring may track:
+Authentication failures
+Suspicious access
+Permission changes
+API abuse
+Cross-tenant access attempts
+Infrastructure anomalies
+Dependency vulnerabilities
+Service failures
+Monitoring should generate actionable signals rather than excessive noise.
+Observability
+RTIQA should provide observability across the platform.
+Observability may include:
+Logs
+Metrics
+Traces
+Health checks
+Error tracking
+Performance monitoring
+Structured Logging
+Logs should use structured formats where practical.
+A log event may include:
+timestamp
+service
+environment
+request_id
+user_id
+tenant_id
+event
+status
+latency
+Sensitive information should not be logged unnecessarily.
+Request Correlation
+Distributed workflows should use correlation identifiers where appropriate.
+Example:
+User Request
+     │
+     ▼
+API Gateway
+     │
+     ├── Service A
+     │
+     ├── Service B
+     │
+     └── Service C
+A shared request or trace identifier can make troubleshooting easier.
+Health Checks
+Services should expose appropriate health information.
+Health checks may distinguish between:
+Process is running
+Service is ready
+Database is available
+External dependency is available
+A service being alive does not necessarily mean that it is ready to serve traffic.
+Backups
+Backups are part of the security and availability strategy.
+Backup coverage may include:
+Database
+Object storage
+Configuration
+Critical metadata
+Infrastructure configuration
+Backup Principles
+Backups should be:
+Automated
+Encrypted
+Monitored
+Tested
+Retained according to policy
+Protected from unauthorized access
+Backup Testing
+A backup that has never been restored should not be assumed to be reliable.
+Restore tests should be performed periodically.
+Testing should verify:
+Backup integrity
+Restore procedure
+Recovery time
+Data completeness
+Application compatibility
+Disaster Recovery
+RTIQA should define recovery strategies for scenarios such as:
+Server failure
+Database corruption
+Infrastructure outage
+Storage failure
+Security incident
+Accidental deletion
+Provider outage
+Recovery Objectives
+Production deployments should define appropriate:
+RPO — Recovery Point Objective
+How much data loss is acceptable after a failure.
+RTO — Recovery Time Objective
+How quickly the service should be restored.
+The actual targets depend on the deployment tier.
+High Availability
+High availability may be implemented where required.
+Possible mechanisms include:
+Multiple application instances
+Database replication
+Load balancing
+Redundant storage
+Health checks
+Automatic recovery
+Multi-zone deployment
+Not every deployment requires the same availability architecture.
+Graceful Degradation
+If one subsystem fails, unrelated capabilities should continue working where possible.
+For example:
+AI Provider Failure
+       │
+       ├── AI Features → Temporarily unavailable
+       │
+       ├── Attendance → Continue
+       ├── Courses → Continue
+       ├── Student Records → Continue
+       └── Administration → Continue
+This principle reduces the blast radius of individual failures.
+Incident Response
+Security incidents should follow a documented response process.
+A general lifecycle is:
+Detection
+   │
+   ▼
+Triage
+   │
+   ▼
+Containment
+   │
+   ▼
+Investigation
+   │
+   ▼
+Remediation
+   │
+   ▼
+Recovery
+   │
+   ▼
+Post-Incident Review
+Security Incident Categories
+Potential incidents include:
+Unauthorized access
+Credential compromise
+Data exposure
+Malware
+Cross-tenant access
+Infrastructure compromise
+API abuse
+Supply-chain vulnerability
+AI data leakage
+Security Disclosure
+Security vulnerabilities should be reported through the project's documented security reporting process.
+Do not publicly disclose a serious vulnerability before maintainers have had an opportunity to investigate and respond.
+See:
+SECURITY.md
+Security Testing
+Security testing should be integrated into the development lifecycle.
+Potential testing includes:
+Static analysis
+Dependency scanning
+Secret scanning
+Container scanning
+API security testing
+Authentication testing
+Authorization testing
+Penetration testing
+Fuzz testing
+Infrastructure testing
+Authorization Testing
+Authorization tests should specifically verify that users cannot access resources outside their permissions.
+Examples:
+Student → Other Student Data       DENY
+Teacher → Unauthorized Class       DENY
+Tenant A → Tenant B Data           DENY
+Parent → Unrelated Student Data    DENY
+AI → Unauthorized Knowledge        DENY
+Multi-Tenant Security Testing
+Tenant isolation should be tested at multiple layers.
+Tests should cover:
+API
+Database
+Search
+Files
+AI retrieval
+Cache
+Background jobs
+Synchronization
+Analytics
+Security Regression Testing
+Security fixes should produce regression tests where practical.
+A vulnerability that has been fixed should not silently return during a future refactor.
+Security Documentation
+Security-sensitive architecture should be documented.
+Documentation may include:
+Threat models
+Authentication architecture
+Authorization model
+Tenant isolation
+Encryption
+Secrets
+Incident response
+Backup architecture
+Disaster recovery
+AI security
+Security Review Gates
+Security review may be required before:
+Production deployment
+Major architecture changes
+New authentication mechanisms
+New external integrations
+New AI capabilities
+New sensitive data processing
+Changes to tenant isolation
+Security Is Continuous
+Security is not a one-time milestone.
+The platform must continuously evolve as:
+Threats change
+Dependencies change
+Infrastructure changes
+Features change
+Regulations change
+Usage scales
+RTIQA therefore treats security as an ongoing engineering discipline.
+Privacy and Security Principle
+RTIQA aims to protect educational information while keeping the platform usable.
+The goal is not to create unnecessary friction.
+The goal is to establish appropriate controls around the information and operations that require protection.
+Security Status
+Security capabilities will mature throughout the project lifecycle.
+A security feature should not be considered complete merely because its configuration exists.
+Production readiness requires:
+Implementation
+Testing
+Documentation
+Monitoring
+Operational procedures
+Recovery procedures
+Security Architecture Goal
+The long-term goal is a platform where security is embedded into the architecture rather than added around it.
+Identity
+   │
+   ▼
+Authorization
+   │
+   ▼
+Tenant Isolation
+   │
+   ▼
+Application Security
+   │
+   ▼
+Data Security
+   │
+   ▼
+Infrastructure Security
+   │
+   ▼
+Monitoring & Response
+Security should operate as a continuous chain of protection across the entire RTIQA ecosystem.
 
 
+RTIQA is designed as a long-term technology platform rather than a single
+application.
+
+Its architecture must therefore support continuous evolution, multiple
+deployment models, institutional customization, artificial intelligence,
+offline operation, large-scale data, and integration with external systems.
+
+The technology strategy prioritizes:
+
+- Correctness
+- Security
+- Maintainability
+- Operational simplicity
+- Performance
+- Scalability
+- Interoperability
+- Portability
+- Long-term sustainability
+- Developer productivity
+- User experience
+
+Technology choices must serve the product architecture, not define it.
+
+---
+
+## 7.1 Technology Strategy Principles
+
+RTIQA follows a set of engineering principles for selecting and evolving
+technology.
+
+### Principle 1 — Use Proven Technology
+
+Prefer technologies with:
+
+- Mature ecosystems
+- Strong documentation
+- Active maintenance
+- Stable APIs
+- Strong security practices
+- Reliable production usage
+- Available developer expertise
+
+RTIQA should avoid adopting technology simply because it is new or popular.
+
+---
+
+### Principle 2 — Minimize Unnecessary Complexity
+
+Complexity has an operational cost.
+
+Every additional framework, service, database, queue, provider, or deployment
+component increases:
+
+- Maintenance requirements
+- Failure modes
+- Monitoring requirements
+- Security surface
+- Developer onboarding cost
+- Infrastructure cost
+
+RTIQA therefore prefers the simplest architecture capable of satisfying the
+actual requirement.
+
+---
+
+### Principle 3 — Architecture Before Infrastructure
+
+RTIQA defines:
+
+1. Product requirements
+2. Domain boundaries
+3. Data boundaries
+4. Security boundaries
+5. API contracts
+6. Operational requirements
+
+before selecting infrastructure components.
+
+Infrastructure should implement the architecture rather than dictate it.
+
+---
+
+### Principle 4 — Portability
+
+The platform should avoid unnecessary dependency on a single:
+
+- Cloud provider
+- AI provider
+- Database vendor
+- Storage provider
+- Authentication provider
+- Messaging provider
+- Deployment environment
+
+Portability does not mean supporting every provider.
+
+It means avoiding architectural decisions that make future migration
+unreasonably expensive.
+
+---
+
+### Principle 5 — API Contracts Matter
+
+Internal and external components should communicate through explicit contracts.
+
+API contracts should define:
+
+- Inputs
+- Outputs
+- Authentication
+- Authorization
+- Validation
+- Errors
+- Versioning
+- Pagination
+- Filtering
+- Rate limits
+- Idempotency
+- Compatibility requirements
+
+---
+
+## 7.2 Engineering Decision Criteria
+
+Technology decisions should be evaluated against the following criteria.
+
+| Criterion | Priority |
+|---|---:|
+| Security | Critical |
+| Maintainability | Critical |
+| Reliability | Critical |
+| Data integrity | Critical |
+| Developer productivity | High |
+| Performance | High |
+| Scalability | High |
+| Interoperability | High |
+| Operational simplicity | High |
+| Cost efficiency | High |
+| Portability | High |
+| Ecosystem maturity | High |
+| Documentation quality | Medium/High |
+| Community size | Medium |
+| Novelty | Low |
+
+A technology should not be selected primarily because it is fashionable.
+
+---
+
+# 7.3 Build vs Integrate Strategy
+
+RTIQA uses a disciplined **Build vs Integrate** strategy.
+
+Not every capability should be developed from scratch.
+
+For each major capability, the engineering team should evaluate:
+
+1. Build internally
+2. Integrate an existing mature solution
+3. Extend an existing component
+4. Replace an existing component
+5. Defer the capability
+
+The decision should consider:
+
+- Functional fit
+- Security
+- License compatibility
+- Data ownership
+- API quality
+- Extensibility
+- Performance
+- Maintenance burden
+- Community health
+- Migration cost
+- Vendor dependency
+- Long-term strategic importance
+
+---
+
+## 7.3 What RTIQA Should Build Internally
+
+Capabilities that define RTIQA's identity should generally remain under
+direct architectural control.
+
+Examples include:
+
+- Tenant model
+- Institutional identity
+- RTIQA authorization model
+- Offline synchronization
+- AI orchestration
+- AI governance
+- AI context and permissions
+- Cross-module workflows
+- RTIQA-specific analytics
+- Institutional configuration
+- Platform-level audit model
+- Integration orchestration
+- Core education workflows
+- RTIQA experience layer
+
+The exact boundary may evolve as the platform matures.
+
+---
+
+## 7.4 What RTIQA May Integrate
+
+Commodity infrastructure capabilities may be provided by specialized
+technologies.
+
+Examples include:
+
+- Object storage
+- Email delivery
+- Push notifications
+- Payment processing
+- Video processing
+- Search infrastructure
+- Queue infrastructure
+- Identity providers
+- Monitoring
+- Logging
+- Cloud infrastructure
+- AI model providers
+
+Integration must occur behind stable interfaces whenever practical.
+
+---
+
+# 7.5 Core Platform Architecture
+
+RTIQA follows a layered architecture.
+
+```text
++------------------------------------------------------+
+|                 User Experience Layer                |
+|                                                      |
+| Web / PWA / Android / iOS / Responsive Interfaces   |
++------------------------------------------------------+
+                         |
+                         v
++------------------------------------------------------+
+|                    Experience API                    |
+|                                                      |
+| Authentication / Sessions / Permissions / BFF / API |
++------------------------------------------------------+
+                         |
+                         v
++------------------------------------------------------+
+|                 Application Layer                    |
+|                                                      |
+| Workflows / Use Cases / Commands / Queries / Jobs   |
++------------------------------------------------------+
+                         |
+                         v
++------------------------------------------------------+
+|                    Domain Layer                      |
+|                                                      |
+| Education / Institutions / Finance / HR / LMS / AI |
++------------------------------------------------------+
+                         |
+                         v
++------------------------------------------------------+
+|                 Data & Infrastructure                |
+|                                                      |
+| Database / Cache / Storage / Search / Queues / AI  |
++------------------------------------------------------+
+The exact implementation may change, but the separation of responsibilities should remain clear.
+7.6 Architecture Layers
+Presentation Layer
+Responsible for:
+User interfaces
+Navigation
+Accessibility
+Localization
+Form interaction
+Client-side state
+Local caching
+Offline interaction
+The presentation layer should not contain core business rules that belong in the domain or application layers.
+API Layer
+Responsible for:
+Request handling
+Authentication
+Authorization
+Validation
+Serialization
+Rate limiting
+API versioning
+Error handling
+Request tracing
+The API layer should provide stable contracts to clients.
+Application Layer
+Responsible for application use cases.
+Examples:
+Enroll student
+Record attendance
+Publish lesson
+Create examination
+Generate report
+Process payment
+Synchronize offline changes
+Generate AI response
+Publish broadcast content
+Application services coordinate domain behavior without becoming a dumping ground for unrelated business logic.
+Domain Layer
+The domain layer represents important RTIQA concepts.
+Examples:
+Institution
+Tenant
+Campus
+Student
+Teacher
+Parent
+Course
+Lesson
+Assessment
+Attendance
+Enrollment
+Invoice
+Payment
+Employee
+Asset
+Library item
+Media content
+Broadcast schedule
+AI session
+Domain rules should be explicit and testable.
+Infrastructure Layer
+Responsible for implementation details such as:
+Database drivers
+Object storage
+Cache
+Queue
+Email
+Push notifications
+External APIs
+AI providers
+Search engines
+Monitoring systems
+Infrastructure components should not leak unnecessary implementation details into business logic.
+7.7 Modular Architecture
+RTIQA should be modular.
+Possible modules include:
+core
+├── identity
+├── organizations
+├── tenants
+├── users
+├── permissions
+├── audit
+└── configuration
+
+education
+├── students
+├── teachers
+├── parents
+├── admissions
+├── enrollment
+├── attendance
+├── timetable
+├── examinations
+├── grading
+└── certificates
+
+learning
+├── courses
+├── lessons
+├── assignments
+├── assessments
+├── content
+├── progress
+└── learning-paths
+
+administration
+├── finance
+├── hr
+├── payroll
+├── assets
+├── facilities
+├── transportation
+└── documents
+
+communication
+├── announcements
+├── notifications
+├── messaging
+├── events
+└── preferences
+
+media
+├── audio
+├── video
+├── broadcasting
+├── schedules
+├── media-library
+└── live-content
+
+ai
+├── gateway
+├── models
+├── prompts
+├── knowledge
+├── retrieval
+├── agents
+├── evaluation
+└── governance
+
+analytics
+├── dashboards
+├── reporting
+├── metrics
+└── intelligence
+
+platform
+├── integrations
+├── webhooks
+├── jobs
+├── storage
+├── search
+└── observability
+This structure is conceptual.
+The implementation may use different package or repository names.
+7.8 Modular Monolith First
+RTIQA should not adopt microservices merely for architectural appearance.
+The default starting architecture should favor a:
+Modular Monolith
+when it provides sufficient isolation and performance.
+A modular monolith can provide:
+Strong module boundaries
+Shared transactions
+Easier development
+Easier deployment
+Lower infrastructure cost
+Easier debugging
+Simpler local development
+Faster product iteration
+Services should be separated only when there is a clear technical or operational reason.
+7.9 When to Introduce a Service Boundary
+A capability may become an independent service when one or more of the following conditions exist:
+Independent scaling is required
+Independent deployment is valuable
+Failure isolation is important
+Different runtime requirements exist
+Security isolation is required
+Resource consumption is substantially different
+The domain boundary is mature
+The operational cost is justified
+Possible candidates may include:
+AI processing
+Media processing
+Video transcoding
+Search
+Notification delivery
+Large-scale analytics
+Synchronization infrastructure
+These boundaries should be introduced based on evidence rather than assumption.
+7.10 Backend Strategy
+The backend should provide:
+Secure APIs
+Business logic
+Authentication
+Authorization
+Tenant isolation
+Data validation
+Background processing
+Audit logging
+Synchronization
+AI orchestration
+Integration management
+The backend should remain independent from any single frontend.
+7.11 Web Application
+The web interface should support:
+Responsive design
+RTL
+Arabic
+English
+Accessibility
+PWA capabilities
+Offline workflows where supported
+Low-bandwidth operation
+Mobile browsers
+Desktop browsers
+Installable application behavior
+The web application should use progressive enhancement.
+Core functionality should remain usable on constrained devices whenever practical.
+7.12 Progressive Web Application
+RTIQA may be delivered as a Progressive Web App.
+PWA capabilities may include:
+Installability
+Service workers
+Local caching
+Offline access
+Background synchronization
+Push notifications
+Application shell caching
+Network-aware behavior
+The PWA must not assume continuous connectivity.
+7.13 Mobile Application Strategy
+RTIQA should support mobile-first workflows.
+Primary mobile considerations include:
+Small screens
+Touch interaction
+Limited bandwidth
+Battery consumption
+Intermittent connectivity
+Local storage
+Background synchronization
+Device permissions
+Push notifications
+Camera usage
+File uploads
+Audio/video playback
+Mobile functionality should prioritize high-frequency workflows.
+Examples:
+Attendance
+Student lookup
+Lesson access
+Assignments
+Messaging
+Notifications
+Offline learning
+Teacher workflows
+Parent updates
+7.14 API-First Architecture
+RTIQA APIs should be treated as first-class platform interfaces.
+The same backend should support:
+Web
+ |
+Mobile
+ |
+PWA
+ |
+Partner Integrations
+ |
+Administrative Tools
+ |
+AI Services
+ |
+External Systems
+The UI must not become the only way to access platform functionality.
+7.15 API Versioning
+API evolution must preserve compatibility where practical.
+Example:
+/api/v1/...
+/api/v2/...
+Versioning strategy should be documented.
+Breaking changes should:
+Be explicitly identified
+Have migration guidance
+Have a deprecation period when appropriate
+Be tested against supported clients
+7.16 API Error Model
+API errors should use a consistent structure.
+Example:
+{
+  "error": {
+    "code": "STUDENT_NOT_FOUND",
+    "message": "The requested student could not be found.",
+    "request_id": "req_123456",
+    "details": {}
+  }
+}
+Error messages must not expose:
+Secrets
+Internal stack traces
+Database details
+Sensitive personal information
+Authorization internals
+7.17 Pagination
+Large collections should not be returned without pagination.
+Possible strategies include:
+Cursor pagination
+Offset pagination
+Keyset pagination
+Cursor or keyset pagination should generally be preferred for large, frequently changing datasets.
+7.18 Filtering and Sorting
+APIs should provide predictable filtering and sorting.
+Example:
+students?grade=9&status=active
+Where supported, APIs may provide:
+Filtering
+Sorting
+Search
+Pagination
+Field selection
+These features must respect authorization boundaries.
+7.19 Database Strategy
+The database is a critical system of record.
+The database strategy should prioritize:
+Data integrity
+Transactional correctness
+Referential integrity
+Appropriate indexing
+Tenant isolation
+Backup reliability
+Migration safety
+Query performance
+Observability
+A relational database is the preferred foundation for transactional institutional data where relational consistency is required.
+7.20 PostgreSQL
+PostgreSQL is a strong candidate for the primary transactional database.
+Potential capabilities include:
+Relational modeling
+Transactions
+Constraints
+JSON support
+Full-text search capabilities
+Extensions
+Row-level security
+Advanced indexing
+Replication options
+The exact database implementation remains subject to architecture validation.
+7.21 Database Design Principles
+Database schemas should:
+Represent clear domain concepts
+Use appropriate primary keys
+Define foreign keys
+Enforce important constraints
+Avoid unnecessary duplication
+Use indexes based on actual access patterns
+Support audit requirements
+Support tenant isolation
+Avoid premature denormalization
+Database design should be reviewed before major production migrations.
+7.22 Database Migrations
+All schema changes should be version controlled.
+A migration should be:
+Repeatable
+Reviewable
+Tested
+Reversible where practical
+Safe for production
+Destructive changes require additional review.
+For large datasets, migrations should consider:
+Lock duration
+Table size
+Backfill cost
+Availability
+Rollback strategy
+7.23 Caching Strategy
+Caching should improve performance without compromising correctness.
+Possible cache targets:
+Session data
+Configuration
+Frequently accessed metadata
+Read-heavy queries
+AI responses where safe
+Search results where appropriate
+Public content
+Sensitive tenant-specific information must never be served from an incorrectly scoped cache.
+Every cache key must include the appropriate isolation context when required.
+Example:
+tenant:{tenant_id}:student:{student_id}
+7.24 Object Storage
+Large files should generally be stored outside the primary transactional database.
+Examples:
+Images
+Videos
+Audio
+PDFs
+Course materials
+Documents
+Certificates
+Attachments
+Object storage should support:
+Access control
+Signed URLs
+Encryption
+Lifecycle policies
+Versioning where needed
+Metadata
+Virus/malware scanning where appropriate
+7.25 Search Architecture
+RTIQA may provide global search across authorized resources.
+Search may cover:
+Students
+Teachers
+Courses
+Lessons
+Documents
+Library content
+Media
+Announcements
+Institutions
+Knowledge-base content
+Search results must always respect:
+Tenant boundaries
+User permissions
+Data visibility
+Content restrictions
+Search must never become an authorization bypass.
+7.26 Semantic Search
+AI-powered semantic search may use vector representations for selected content.
+Possible use cases include:
+Finding related lessons
+Finding relevant documents
+Knowledge retrieval
+AI tutoring
+Content recommendations
+Similar question detection
+Vector search must inherit the same access-control model as the source data.
+7.27 Messaging and Queues
+Background work should use queues where asynchronous processing is appropriate.
+Examples:
+Email delivery
+Push notifications
+AI processing
+File processing
+Media transcoding
+Report generation
+Data synchronization
+Scheduled jobs
+Analytics processing
+Queue processing should support:
+Retries
+Idempotency
+Dead-letter handling
+Monitoring
+Backoff
+Failure visibility
+7.28 Event-Driven Architecture
+RTIQA may use domain or platform events when asynchronous decoupling provides a meaningful benefit.
+Example:
+Student Enrolled
+       |
+       +----> Notification
+       |
+       +----> Analytics
+       |
+       +----> Audit
+       |
+       +----> Learning Provisioning
+Events should not replace transactional consistency.
+The originating transaction must remain correct even if downstream consumers are temporarily unavailable.
+7.29 Event Design
+Events should have:
+Stable names
+Versioned schemas where necessary
+Unique identifiers
+Timestamps
+Tenant context
+Actor context where appropriate
+Correlation identifiers
+Source information
+Example:
+{
+  "event_id": "evt_123",
+  "event_type": "student.enrolled",
+  "version": 1,
+  "tenant_id": "tenant_123",
+  "occurred_at": "2026-01-01T10:00:00Z",
+  "data": {
+    "student_id": "student_456"
+  }
+}
+Sensitive data should not be unnecessarily embedded in events.
+7.30 AI Infrastructure
+The AI layer should be abstracted from the rest of the application.
+Conceptually:
+RTIQA Application
+       |
+       v
++--------------------+
+|      AI Gateway    |
++--------------------+
+       |
+       +------------------+
+       |                  |
+       v                  v
+ Provider A          Provider B
+       |                  |
+       +--------+---------+
+                |
+                v
+        Models / Services
+The AI Gateway can provide:
+Provider abstraction
+Model routing
+Authentication
+Usage tracking
+Rate limiting
+Safety controls
+Prompt management
+Context management
+Logging
+Cost controls
+Evaluation hooks
+7.31 AI Provider Independence
+RTIQA should not make core product behavior dependent on one AI model.
+The system should be capable of changing:
+Provider
+Model
+Model version
+Inference configuration
+without rewriting the entire application.
+Provider-specific capabilities may still be exposed when they provide meaningful value.
+7.32 AI Model Routing
+Different tasks may use different models.
+Example:
+Simple classification
+        |
+        v
+Low-cost model
+
+Complex educational reasoning
+        |
+        v
+Higher-capability model
+
+Large document processing
+        |
+        v
+Long-context model
+
+Embedding generation
+        |
+        v
+Embedding model
+Routing should consider:
+Quality
+Cost
+Latency
+Context size
+Availability
+Privacy requirements
+Language support
+7.33 AI Request Lifecycle
+A typical AI request may follow:
+User Request
+     |
+     v
+Authentication
+     |
+     v
+Authorization
+     |
+     v
+Input Validation
+     |
+     v
+Safety Checks
+     |
+     v
+Context Selection
+     |
+     v
+Knowledge Retrieval
+     |
+     v
+Prompt Assembly
+     |
+     v
+Model Routing
+     |
+     v
+Inference
+     |
+     v
+Output Validation
+     |
+     v
+Citation / Source Attachment
+     |
+     v
+Audit / Metrics
+     |
+     v
+User
+Not every request requires every step.
+The architecture should make these controls available when required.
+7.34 Infrastructure Strategy
+RTIQA should support multiple deployment models.
+Potential environments include:
+Cloud
+Suitable for:
+SaaS deployments
+Centralized administration
+High availability
+Large institutions
+Multi-tenant platforms
+Private Infrastructure
+Suitable for organizations requiring:
+Local control
+Specific compliance requirements
+Internal infrastructure
+Restricted connectivity
+Local / On-Premises
+Suitable for:
+Schools with unreliable internet
+Local network deployments
+Rural environments
+Institutional installations
+Hybrid
+A hybrid architecture can combine:
+Central Cloud
+     |
+     | synchronization
+     |
+Local Institution Server
+     |
+     +---- School Network
+              |
+              +---- Student Devices
+              +---- Teacher Devices
+              +---- Admin Devices
+This model may become particularly important for regions with unreliable connectivity.
+7.35 Docker
+Docker should be supported for reproducible development and deployment.
+Containerization can provide:
+Consistent environments
+Easier local development
+Simplified deployment
+Service isolation
+CI compatibility
+Easier testing
+Example conceptual stack:
+RTIQA
+├── Web
+├── API
+├── Worker
+├── Database
+├── Cache
+├── Object Storage
+├── Search
+└── AI Gateway
+The actual production topology may differ.
+7.36 Environment Separation
+RTIQA should distinguish at least:
+Development
+     |
+     v
+Testing
+     |
+     v
+Staging
+     |
+     v
+Production
+Production data must not be casually copied into development environments.
+Sensitive information must be sanitized when test datasets are created.
+7.37 Configuration Management
+Configuration should be externalized from application code.
+Configuration categories include:
+Database
+Storage
+Authentication
+Email
+Notifications
+AI providers
+Feature flags
+External integrations
+Logging
+Security settings
+Secrets must never be committed to source control.
+7.38 Feature Flags
+Feature flags may be used for:
+Gradual rollouts
+Experimental functionality
+Tenant-specific features
+Emergency disablement
+A/B testing where appropriate
+Feature flags should be:
+Documented
+Auditable
+Scoped
+Removable after use
+Temporary flags should not become permanent hidden configuration.
+7.39 Observability Architecture
+Production systems require visibility into:
+Logs
+Metrics
+Traces
+Errors
+Queue health
+Database health
+Synchronization health
+AI usage
+API latency
+Storage
+Infrastructure
+A request should ideally be traceable using a correlation or request ID.
+Example:
+Request
+  |
+  +--> API
+        |
+        +--> Database
+        |
+        +--> Queue
+        |
+        +--> AI Gateway
+        |
+        +--> External Service
+7.40 Reliability Strategy
+Reliability should be designed into the architecture.
+The platform should consider:
+Retries
+Timeouts
+Circuit breakers where appropriate
+Idempotency
+Graceful degradation
+Queue isolation
+Health checks
+Backup systems
+Failure recovery
+Monitoring
+Capacity planning
+The system should fail safely.
+7.41 Graceful Degradation
+When a non-critical service fails, core platform functionality should remain available whenever practical.
+Examples:
+If AI is unavailable:
+Learning Platform
+       |
+       +---- AI unavailable
+       |
+       +---- Core learning remains available
+If notification delivery fails:
+Core transaction
+       |
+       +---- successful
+       |
+       +---- notification queued/retried
+The failure of an auxiliary service should not automatically invalidate a successful primary transaction.
+7.42 Performance Strategy
+Performance optimization should be evidence-driven.
+Key measurements include:
+API latency
+Database query time
+Page load time
+Mobile startup time
+Synchronization time
+AI latency
+Search latency
+File upload/download performance
+Queue processing time
+Optimization should target measured bottlenecks.
+7.43 Scalability Model
+RTIQA should be capable of scaling across several dimensions.
+User Scalability
+More:
+Students
+Teachers
+Parents
+Administrators
+Institutional Scalability
+More:
+Schools
+Campuses
+Organizations
+Education networks
+Data Scalability
+More:
+Lessons
+Documents
+Assessments
+Media
+Events
+Analytics data
+AI Scalability
+More:
+AI requests
+Knowledge retrieval
+Model inference
+Generated content
+Scaling should be possible without redesigning the entire platform.
+7.44 Horizontal Scaling
+Stateless application components should be horizontally scalable where practical.
+Conceptually:
+             Load Balancer
+                  |
+       +----------+----------+
+       |          |          |
+       v          v          v
+     API-1      API-2      API-3
+       |          |          |
+       +----------+----------+
+                  |
+                  v
+              Database
+State should be stored in appropriate shared systems rather than local application memory when horizontal scaling requires shared state.
+7.45 Background Worker Scaling
+Workers should be independently scalable.
+Example:
+Queue
+ |
+ +---- Worker 1
+ |
+ +---- Worker 2
+ |
+ +---- Worker 3
+ |
+ +---- Worker N
+Different queues may be separated by workload.
+Examples:
+critical
+notifications
+ai
+media
+reports
+sync
+analytics
+7.46 Data Architecture
+RTIQA should distinguish between different classes of data.
+Transactional Data
+Examples:
+Students
+Enrollments
+Payments
+Attendance
+Grades
+Content Data
+Examples:
+Lessons
+Documents
+Videos
+Audio
+Questions
+Operational Data
+Examples:
+Logs
+Job states
+Synchronization states
+Metrics
+Analytical Data
+Examples:
+Aggregated statistics
+Dashboards
+Trends
+Reporting datasets
+AI Data
+Examples:
+Embeddings
+Retrieval metadata
+AI evaluation results
+Model usage
+AI audit records
+Different data types may require different storage strategies.
+7.47 Data Ownership
+Every important data object should have a clearly defined owner and authority.
+Questions to answer:
+Which module owns this data?
+Who may modify it?
+Which APIs expose it?
+Which events are emitted?
+How is it synchronized?
+How is it archived?
+How is it deleted?
+How is it exported?
+Shared databases must not become an excuse for undefined ownership.
+7.48 Source of Truth
+For each important entity, RTIQA should identify the authoritative source.
+Example:
+Student Profile
+      |
+      v
+Student Domain
+      |
+      +---- LMS references
+      +---- Attendance references
+      +---- Finance references
+      +---- Analytics references
+Other modules may reference the entity but should not independently create conflicting authoritative versions of the same record.
+7.49 Data Consistency
+RTIQA may use different consistency models depending on the workflow.
+Strong Consistency
+Use when correctness requires immediate agreement.
+Examples:
+Financial transactions
+Enrollment constraints
+Permission changes
+Eventual Consistency
+May be appropriate for:
+Analytics
+Search indexes
+Notifications
+Recommendations
+Derived statistics
+Offline Eventual Consistency
+Required for selected offline workflows.
+The consistency model should be explicit rather than accidental.
+7.50 Repository Architecture
+The repository structure should reflect architectural boundaries.
+A conceptual repository may contain:
+rtiqa/
+├── apps/
+│   ├── web/
+│   ├── mobile/
+│   └── admin/
+│
+├── backend/
+│   ├── core/
+│   ├── education/
+│   ├── learning/
+│   ├── administration/
+│   ├── communication/
+│   ├── media/
+│   ├── ai/
+│   └── analytics/
+│
+├── packages/
+│   ├── shared-types/
+│   ├── ui/
+│   ├── validation/
+│   ├── auth/
+│   └── sync/
+│
+├── infrastructure/
+│   ├── docker/
+│   ├── deployment/
+│   ├── monitoring/
+│   └── scripts/
+│
+├── docs/
+│   ├── architecture/
+│   ├── api/
+│   ├── security/
+│   ├── operations/
+│   └── product/
+│
+└── tests/
+    ├── unit/
+    ├── integration/
+    ├── e2e/
+    ├── security/
+    └── performance/
+The final repository may use a different organization depending on the selected implementation stack.
+7.51 Shared Libraries
+Shared libraries should contain genuinely reusable functionality.
+Examples:
+Type definitions
+Validation schemas
+API clients
+Authentication helpers
+UI primitives
+Localization utilities
+Synchronization primitives
+Shared code should not become a dumping ground for unrelated logic.
+7.52 Dependency Management
+Dependencies should be:
+Explicit
+Versioned
+Audited
+Updated regularly
+Tested before upgrades
+Major dependency upgrades should include:
+Compatibility review
+Security review
+Regression testing
+Migration planning
+7.53 Technology Evaluation Matrix
+Major technology decisions should be documented.
+Example:
+Technology
+Fit
+Security
+Complexity
+Cost
+Portability
+Decision
+Option A
+High
+High
+Low
+Low
+High
+Adopt
+Option B
+High
+Medium
+High
+Medium
+Medium
+Evaluate
+Option C
+Medium
+High
+Low
+High
+Low
+Defer
+The purpose is not to produce perfect numerical scores.
+The purpose is to make architectural reasoning explicit.
+7.54 Architecture Decision Records
+Important architecture decisions should be documented as ADRs.
+Example:
+ADR-001: Primary Database
+ADR-002: Multi-Tenant Isolation
+ADR-003: Offline Synchronization Model
+ADR-004: AI Gateway Architecture
+ADR-005: Authentication Strategy
+ADR-006: Object Storage
+ADR-007: Search Architecture
+ADR-008: Service Boundary Strategy
+Each ADR should explain:
+Context
+Problem
+Options considered
+Decision
+Consequences
+Revisit conditions
+7.55 Avoiding Vendor Lock-In
+Vendor lock-in should be managed rather than treated as an absolute prohibition.
+Good abstraction targets include:
+AI providers
+Object storage
+Email providers
+Notification providers
+Payment providers
+Search providers
+Not every infrastructure component requires a custom abstraction.
+Abstraction has a cost.
+The correct question is:
+Is the strategic value of portability greater than the complexity of maintaining the abstraction?
+7.56 Operational Simplicity
+The platform should be deployable and maintainable by a small engineering team.
+This means preferring:
+Fewer moving parts
+Clear ownership
+Automated deployments
+Automated migrations
+Automated backups
+Centralized observability
+Documented recovery procedures
+Predictable environments
+A technically sophisticated architecture that cannot be operated reliably is not a successful architecture.
+7.57 Cost-Aware Architecture
+RTIQA is designed for organizations that may have limited budgets.
+Infrastructure should therefore support cost-efficient deployments.
+The architecture should make it possible to start with:
+Small Deployment
+      |
+      v
+Low Infrastructure Cost
+      |
+      v
+Growing Usage
+      |
+      v
+Incremental Scaling
+The platform should not require enterprise-scale infrastructure on day one.
+7.58 Low-Resource Deployment
+A small deployment should ideally operate with a limited infrastructure footprint.
+Example conceptual deployment:
+Internet
+   |
+   v
+Reverse Proxy
+   |
+   v
+RTIQA Application
+   |
+   +---- PostgreSQL
+   |
+   +---- Cache
+   |
+   +---- Object Storage
+As requirements increase, components can be separated and scaled.
+7.59 High-Scale Deployment
+A larger deployment may evolve toward:
+                    Internet
+                       |
+                       v
+                 Load Balancer
+                       |
+          +------------+------------+
+          |            |            |
+          v            v            v
+        API-1        API-2        API-N
+          |            |            |
+          +------------+------------+
+                       |
+              +--------+--------+
+              |                 |
+              v                 v
+          Database           Cache
+              |
+       +------+------+
+       |             |
+       v             v
+   Read Replicas   Analytics
+       
+Queue System
+   |
+   +---- Workers
+   +---- AI Workers
+   +---- Media Workers
+The actual topology should be driven by measured requirements.
+7.60 Compatibility Strategy
+RTIQA should define compatibility expectations for:
+Browsers
+Mobile operating systems
+API clients
+Database versions
+Infrastructure components
+AI providers
+External integrations
+Unsupported environments should fail predictably rather than producing undefined behavior.
+7.61 Technology Lifecycle
+Technology components should have a lifecycle.
+Evaluate
+   |
+   v
+Adopt
+   |
+   v
+Operate
+   |
+   v
+Monitor
+   |
+   v
+Upgrade
+   |
+   v
+Replace / Retire
+Dependencies and infrastructure should not remain indefinitely without maintenance.
+7.62 Technical Debt Management
+Technical debt should be tracked explicitly.
+Technical debt may include:
+Temporary workarounds
+Deprecated APIs
+Weak abstractions
+Performance bottlenecks
+Missing tests
+Outdated dependencies
+Manual operational procedures
+Each significant technical debt item should have:
+Owner
+Impact
+Priority
+Recommended resolution
+Review date
+7.63 Architecture Review
+Major architectural changes should be reviewed before implementation.
+Review questions include:
+Does this preserve tenant isolation?
+Does this preserve security?
+Does this support offline requirements?
+Does this introduce unnecessary complexity?
+Does this create vendor lock-in?
+Does this affect data ownership?
+Does this affect API compatibility?
+Does this increase operational cost?
+Can it be tested?
+Can it be rolled back?
+7.64 Architecture Evolution
+RTIQA architecture is expected to evolve.
+The goal is not to predict every future requirement.
+The goal is to create a foundation that can evolve safely.
+Architecture decisions should therefore favor:
+Clear boundaries
+Stable contracts
+Replaceable infrastructure
+Explicit data ownership
+Automated testing
+Observability
+Incremental migration
+7.65 Architecture Quality Gates
+Before a major feature is considered architecturally complete, the team should verify:
+[ ] Domain boundary is defined
+[ ] Data ownership is defined
+[ ] Tenant isolation is preserved
+[ ] Authorization is enforced
+[ ] API contract is documented
+[ ] Offline behavior is defined where applicable
+[ ] Error behavior is defined
+[ ] Observability is available
+[ ] Tests exist
+[ ] Migration strategy exists
+[ ] Rollback strategy exists
+[ ] Security impact is reviewed
+[ ] Performance impact is considered
+[ ] Documentation is updated
+7.66 Architecture Principle
+RTIQA's architecture can be summarized as:
+Build the strategic core, integrate commodity capabilities, isolate infrastructure behind clear contracts, keep the system modular, and scale complexity only when real requirements justify it.
+The architecture must remain understandable to the engineers who operate it.
+7.67 Technology Strategy Summary
+RTIQA's technology strategy is therefore:
+Product Requirements
+        |
+        v
+Domain Modeling
+        |
+        v
+Security & Data Boundaries
+        |
+        v
+Build vs Integrate Decision
+        |
+        v
+Modular Architecture
+        |
+        v
+API Contracts
+        |
+        v
+Reliable Infrastructure
+        |
+        v
+Observability & Testing
+        |
+        v
+Incremental Scaling
+This strategy is intended to allow RTIQA to begin with a practical, cost-efficient deployment while preserving a path toward large-scale multi-tenant operation.
+7.68 Final Architecture Objective
+The ultimate objective is not to maximize the number of technologies used by RTIQA.
+The objective is to create a platform that is:
+Reliable
+Secure
+Maintainable
+Scalable
+Accessible
+Offline-capable
+AI-native
+Multi-tenant
+Cloud-ready
+Institution-friendly
+Developer-friendly
+Cost-conscious
+Globally deployable
+Technology is an implementation mechanism.
+The product architecture remains the source of truth.
+
+
+RTIQA is intended to be developed as a serious long-term software platform.
+
+The repository must therefore provide:
+
+- Clear ownership
+- Predictable structure
+- Reproducible development
+- Consistent coding standards
+- Safe collaboration
+- Automated quality checks
+- Traceable changes
+- Strong documentation
+- Controlled releases
+
+The repository is not merely a collection of source files.
+
+It is the engineering source of truth for the platform.
+
+---
+
+## 8.1 Repository Principles
+
+RTIQA follows these repository principles:
+
+1. Keep architecture visible.
+2. Keep modules clearly separated.
+3. Keep configuration explicit.
+4. Keep secrets out of source control.
+5. Keep documentation close to the implementation.
+6. Keep automated checks reproducible.
+7. Keep changes reviewable.
+8. Keep production behavior traceable to version-controlled code.
+
+---
+
+# 8.2 Repository Structure
+
+The exact repository structure may evolve with implementation, but the
+architecture should remain recognizable.
+
+A conceptual structure is:
+
+```text
+rtiqa/
+├── apps/
+│   ├── web/
+│   ├── mobile/
+│   └── admin/
+│
+├── backend/
+│   ├── core/
+│   ├── education/
+│   ├── learning/
+│   ├── administration/
+│   ├── communication/
+│   ├── media/
+│   ├── ai/
+│   └── analytics/
+│
+├── packages/
+│   ├── ui/
+│   ├── types/
+│   ├── validation/
+│   ├── auth/
+│   ├── api-client/
+│   ├── sync/
+│   └── localization/
+│
+├── infrastructure/
+│   ├── docker/
+│   ├── deployment/
+│   ├── database/
+│   ├── monitoring/
+│   └── scripts/
+│
+├── docs/
+│   ├── architecture/
+│   ├── api/
+│   ├── security/
+│   ├── operations/
+│   ├── product/
+│   └── decisions/
+│
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   ├── e2e/
+│   ├── security/
+│   ├── performance/
+│   └── offline/
+│
+├── scripts/
+│
+├── .github/
+│   ├── workflows/
+│   ├── ISSUE_TEMPLATE/
+│   └── PULL_REQUEST_TEMPLATE.md
+│
+├── README.md
+├── LICENSE
+├── CONTRIBUTING.md
+├── SECURITY.md
+├── CHANGELOG.md
+├── CODE_OF_CONDUCT.md
+└── .gitignore
+
+This structure is illustrative.
+
+The implementation team may adapt it to the selected framework and deployment architecture.
+
+
+---
+
+8.3 Source Code Ownership
+
+Each major module should have clear ownership.
+
+Example:
+
+core/
+education/
+learning/
+administration/
+communication/
+media/
+ai/
+analytics/
+
+Ownership should define:
+
+Responsible engineers
+
+Reviewers
+
+Architectural dependencies
+
+Documentation location
+
+Testing requirements
+
+
+No critical module should have completely undefined ownership.
+
+
+---
+
+8.4 Module Boundaries
+
+Modules should communicate through defined interfaces.
+
+A module should not directly manipulate another module's internal implementation without a justified architectural reason.
+
+For example:
+
+Education
+    |
+    v
+Student Service
+    |
+    +---- Student Repository
+    +---- Enrollment Rules
+    +---- Attendance Rules
+
+Another module should use the supported interface rather than reaching into internal implementation details.
+
+
+---
+
+8.5 Dependency Direction
+
+Dependencies should generally flow toward stable abstractions.
+
+Conceptually:
+
+Presentation
+      |
+      v
+Application
+      |
+      v
+Domain
+      ^
+      |
+Infrastructure
+
+Infrastructure should implement interfaces required by the application or domain rather than forcing infrastructure-specific behavior into business logic.
+
+
+---
+
+8.6 Avoiding Circular Dependencies
+
+Circular dependencies should be avoided.
+
+Bad:
+
+Module A ---> Module B
+   ^             |
+   |             v
+   +-------------+
+
+Preferred:
+
+Module A ---> Shared Contract
+Module B ---> Shared Contract
+
+Shared contracts should remain small and purposeful.
+
+
+---
+
+8.7 Configuration Files
+
+Configuration should be organized clearly.
+
+Typical categories include:
+
+.env.example
+config/
+infrastructure/
+deployment/
+
+Environment-specific configuration should not be hardcoded into application logic.
+
+
+---
+
+8.8 Environment Variables
+
+Environment variables may contain:
+
+Database connection information
+
+Storage configuration
+
+API endpoints
+
+Authentication configuration
+
+AI provider configuration
+
+Email configuration
+
+Notification configuration
+
+
+Secrets must never be committed to Git.
+
+Example:
+
+DATABASE_URL=
+AUTH_SECRET=
+AI_API_KEY=
+STORAGE_ACCESS_KEY=
+STORAGE_SECRET_KEY=
+
+The .env.example file should contain placeholders only.
+
+
+---
+
+8.9 Secret Management
+
+Production secrets should be stored using an appropriate secret-management system.
+
+Examples include:
+
+Cloud secret managers
+
+Deployment platform secrets
+
+Encrypted CI/CD secrets
+
+Dedicated secret-management systems
+
+
+Secrets should not be:
+
+Hardcoded
+
+Stored in source files
+
+Printed in logs
+
+Included in screenshots
+
+Included in error reports
+
+
+
+---
+
+8.10 Documentation Structure
+
+Documentation should be treated as part of the product.
+
+Recommended structure:
+
+docs/
+├── architecture/
+│   ├── overview.md
+│   ├── multi-tenancy.md
+│   ├── offline-first.md
+│   ├── ai-architecture.md
+│   └── data-architecture.md
+│
+├── api/
+│   ├── overview.md
+│   ├── authentication.md
+│   ├── versioning.md
+│   └── errors.md
+│
+├── security/
+│   ├── security-model.md
+│   ├── threat-model.md
+│   └── privacy.md
+│
+├── operations/
+│   ├── deployment.md
+│   ├── backups.md
+│   ├── monitoring.md
+│   └── disaster-recovery.md
+│
+├── product/
+│   ├── vision.md
+│   ├── modules.md
+│   └── roadmap.md
+│
+└── decisions/
+    ├── ADR-001.md
+    ├── ADR-002.md
+    └── ...
+
+
+---
+
+8.11 Documentation Requirements
+
+A major feature should normally include documentation covering:
+
+Purpose
+
+User workflow
+
+Architecture
+
+API
+
+Data model
+
+Permissions
+
+Error handling
+
+Offline behavior
+
+Testing
+
+Operational considerations
+
+
+Documentation should be updated with the implementation.
+
+
+---
+
+8.12 Architecture Decision Records
+
+Important technical decisions should be recorded.
+
+An ADR should contain:
+
+# ADR-XXX: Decision Title
+
+## Status
+
+Accepted
+
+## Context
+
+Why the decision is necessary.
+
+## Options
+
+Alternative approaches considered.
+
+## Decision
+
+The selected approach.
+
+## Consequences
+
+Benefits, limitations, and operational effects.
+
+## Revisit Conditions
+
+When this decision should be reconsidered.
+
+
+---
+
+8.13 Development Workflow
+
+The recommended workflow is:
+
+Requirement
+    |
+    v
+Specification
+    |
+    v
+Architecture Review
+    |
+    v
+Implementation
+    |
+    v
+Tests
+    |
+    v
+Code Review
+    |
+    v
+CI Checks
+    |
+    v
+Staging
+    |
+    v
+Production
+
+No major feature should move directly from idea to production without appropriate validation.
+
+
+---
+
+8.14 Requirement Definition
+
+Before implementation, the team should define:
+
+Problem
+
+User
+
+Expected behavior
+
+Acceptance criteria
+
+Security requirements
+
+Data requirements
+
+Offline requirements
+
+Performance expectations
+
+Dependencies
+
+Operational impact
+
+
+This reduces ambiguity before engineering effort begins.
+
+
+---
+
+8.15 Feature Specification
+
+A feature specification should answer:
+
+Who?
+
+Who uses the feature?
+
+Why?
+
+What problem does it solve?
+
+What?
+
+What exactly should happen?
+
+When?
+
+Under what conditions?
+
+Where?
+
+Which application or module owns it?
+
+What if it fails?
+
+What is the expected failure behavior?
+
+What if the device is offline?
+
+What should happen without connectivity?
+
+
+---
+
+8.16 Definition of Done
+
+A feature should not be considered complete merely because its UI exists.
+
+A practical Definition of Done may include:
+
+[ ] Requirements implemented
+
+[ ] Business rules implemented
+
+[ ] Authorization implemented
+
+[ ] Tenant isolation verified
+
+[ ] Validation implemented
+
+[ ] Error handling implemented
+
+[ ] Offline behavior implemented where required
+
+[ ] Tests added
+
+[ ] Documentation updated
+
+[ ] Accessibility reviewed
+
+[ ] Localization reviewed
+
+[ ] Observability added
+
+[ ] Security reviewed
+
+[ ] Code reviewed
+
+[ ] CI checks passed
+
+
+
+---
+
+8.17 Git Workflow
+
+Git should be used as the authoritative version-control system.
+
+The repository should maintain:
+
+Clear commits
+
+Reviewable branches
+
+Traceable releases
+
+Protected production branches
+
+Automated validation
+
+
+
+---
+
+8.18 Branch Strategy
+
+A simple branch model is preferred.
+
+main
+ |
+ +---- feature/...
+ |
+ +---- fix/...
+ |
+ +---- refactor/...
+ |
+ +---- docs/...
+ |
+ +---- chore/...
+
+The exact branching model may evolve.
+
+The important requirement is that changes remain isolated and reviewable.
+
+
+---
+
+8.19 Main Branch
+
+The main branch should represent a stable integration point.
+
+Depending on project maturity:
+
+It may be deployable.
+
+It should pass required automated checks.
+
+It should not contain known critical vulnerabilities.
+
+It should not contain intentionally broken experimental code.
+
+
+Production deployment should normally originate from a known validated revision.
+
+
+---
+
+8.20 Feature Branches
+
+Feature branches should be focused.
+
+Examples:
+
+feature/student-attendance
+feature/offline-sync
+feature/ai-tutor
+feature/media-broadcasting
+feature/parent-dashboard
+
+A feature branch should avoid unrelated modifications.
+
+
+---
+
+8.21 Bug-Fix Branches
+
+Bug fixes should use descriptive names.
+
+Examples:
+
+fix/attendance-sync-conflict
+fix/student-search-pagination
+fix/rtl-navigation
+fix/ai-timeout
+
+Critical production fixes should receive accelerated review while still passing appropriate safety checks.
+
+
+---
+
+8.22 Refactoring Branches
+
+Refactoring should be separated from unrelated product changes where practical.
+
+Examples:
+
+refactor/auth-module
+refactor/database-repository
+refactor/sync-engine
+
+This makes code review easier and reduces regression risk.
+
+
+---
+
+8.23 Commit Convention
+
+Commits should communicate intent.
+
+Recommended format:
+
+type(scope): description
+
+Examples:
+
+feat(attendance): add offline attendance recording
+fix(sync): resolve duplicate sync operations
+refactor(auth): simplify session handling
+docs(api): document pagination
+test(ai): add tutor safety tests
+chore(ci): update test workflow
+
+
+---
+
+8.24 Commit Types
+
+Common types include:
+
+Type	Purpose
+
+feat	New functionality
+fix	Bug correction
+refactor	Internal restructuring
+docs	Documentation
+test	Tests
+perf	Performance
+security	Security-related change
+chore	Maintenance
+build	Build system
+ci	CI/CD changes
+
+
+The project may standardize the exact list.
+
+
+---
+
+8.25 Commit Quality
+
+A good commit should be:
+
+Focused
+
+Understandable
+
+Reviewable
+
+Revertible where practical
+
+
+Avoid commits such as:
+
+update
+changes
+fix stuff
+final
+new version
+
+Prefer:
+
+fix(sync): prevent duplicate attendance records
+
+
+---
+
+8.26 Pull Requests
+
+Every significant change should normally be submitted through a Pull Request.
+
+A Pull Request should explain:
+
+What changed
+
+Why it changed
+
+How it works
+
+What was tested
+
+Known limitations
+
+Migration requirements
+
+Security considerations
+
+Screenshots where UI changes are relevant
+
+
+
+---
+
+8.27 Pull Request Template
+
+A recommended template:
+
+## Summary
+
+Describe the change.
+
+## Problem
+
+Describe the problem being solved.
+
+## Solution
+
+Describe the implementation.
+
+## Testing
+
+- [ ] Unit tests
+- [ ] Integration tests
+- [ ] E2E tests
+- [ ] Manual testing
+
+## Security
+
+- [ ] Authorization reviewed
+- [ ] Tenant isolation reviewed
+- [ ] Sensitive data reviewed
+
+## Offline
+
+- [ ] Not applicable
+- [ ] Offline behavior tested
+
+## Documentation
+
+- [ ] Updated
+- [ ] Not required
+
+## Screenshots
+
+Add screenshots for UI changes.
+
+## Breaking Changes
+
+Describe any breaking changes.
+
+
+---
+
+8.28 Pull Request Size
+
+Pull Requests should remain reasonably focused.
+
+Large changes should be divided when practical.
+
+For example:
+
+PR 1
+Database schema
+
+        ↓
+
+PR 2
+Backend API
+
+        ↓
+
+PR 3
+Frontend workflow
+
+        ↓
+
+PR 4
+Offline synchronization
+
+        ↓
+
+PR 5
+Testing and documentation
+
+This is easier to review than one enormous change.
+
+
+---
+
+8.29 Code Review
+
+Code review should evaluate more than syntax.
+
+Reviewers should consider:
+
+Correctness
+
+Does the implementation behave correctly?
+
+Security
+
+Can unauthorized users access or modify data?
+
+Multi-Tenancy
+
+Can data cross tenant boundaries?
+
+Offline
+
+Can synchronization create inconsistent data?
+
+Performance
+
+Are there unnecessary expensive operations?
+
+Maintainability
+
+Can another engineer understand the code?
+
+Testing
+
+Are important behaviors covered?
+
+
+---
+
+8.30 Review Checklist
+
+[ ] Requirements satisfied
+[ ] Correct domain ownership
+[ ] Authorization correct
+[ ] Tenant isolation preserved
+[ ] Validation correct
+[ ] Error handling correct
+[ ] No secret exposure
+[ ] No unnecessary complexity
+[ ] Database queries reviewed
+[ ] API contract reviewed
+[ ] Offline behavior reviewed
+[ ] Tests sufficient
+[ ] Documentation updated
+
+
+---
+
+8.31 Issue Management
+
+Issues should represent actionable work.
+
+Recommended categories:
+
+bug
+feature
+enhancement
+security
+performance
+documentation
+infrastructure
+architecture
+technical-debt
+accessibility
+localization
+offline
+ai
+media
+
+
+---
+
+8.32 Bug Reports
+
+A bug report should include:
+
+Description
+
+Expected behavior
+
+Actual behavior
+
+Reproduction steps
+
+Environment
+
+Browser/device
+
+Logs where appropriate
+
+Screenshots where useful
+
+Severity
+
+Frequency
+
+
+Example:
+
+Title:
+Attendance records duplicated after offline synchronization
+
+Environment:
+Android / Offline-first mode
+
+Expected:
+One attendance record per student/session.
+
+Actual:
+Duplicate records appear after reconnecting.
+
+Reproduction:
+1. Open attendance
+2. Disconnect network
+3. Record attendance
+4. Reconnect
+5. Observe duplicate
+
+
+---
+
+8.33 Feature Requests
+
+Feature requests should explain:
+
+User problem
+
+Target users
+
+Proposed behavior
+
+Expected value
+
+Constraints
+
+Security implications
+
+Offline implications
+
+Possible alternatives
+
+
+
+---
+
+8.34 Security Issues
+
+Security vulnerabilities should not be disclosed publicly before they are properly assessed.
+
+Security reports should follow the project's security disclosure process.
+
+Security issues should receive priority according to:
+
+Impact
+
+Exploitability
+
+Data exposure
+
+Tenant impact
+
+Availability impact
+
+
+
+---
+
+8.35 Severity Model
+
+A practical severity model:
+
+Severity	Meaning
+
+Critical	Immediate major security/data/system impact
+High	Significant production impact
+Medium	Important but contained impact
+Low	Minor impact
+Informational	Improvement or observation
+
+
+Severity and priority are related but not identical.
+
+
+---
+
+8.36 Coding Standards
+
+Code should prioritize:
+
+Readability
+
+Explicit behavior
+
+Small functions
+
+Clear names
+
+Strong typing where supported
+
+Predictable error handling
+
+Minimal duplication
+
+Testability
+
+
+Avoid clever code that is difficult to maintain.
+
+
+---
+
+8.37 Naming
+
+Names should communicate intent.
+
+Prefer:
+
+calculateStudentGrade()
+syncAttendanceRecords()
+validateTenantAccess()
+generateLessonSummary()
+
+Avoid:
+
+doThing()
+process()
+handleData()
+run()
+
+unless the context makes the meaning unambiguous.
+
+
+---
+
+8.38 Functions
+
+Functions should generally perform one coherent responsibility.
+
+Bad:
+
+createStudentAndSendEmailAndGenerateReportAndUpdateAnalytics()
+
+Prefer:
+
+createStudent()
+sendEnrollmentNotification()
+generateStudentReport()
+recordEnrollmentAnalytics()
+
+These operations may still be orchestrated by an application service.
+
+
+---
+
+8.39 Error Handling
+
+Errors should be handled intentionally.
+
+The application should distinguish between:
+
+Validation errors
+
+Authentication errors
+
+Authorization errors
+
+Not found
+
+Conflict
+
+Rate limit
+
+Dependency failure
+
+Internal failure
+
+Offline state
+
+
+Errors should be observable without exposing sensitive implementation details.
+
+
+---
+
+8.40 Logging Standards
+
+Logs should be:
+
+Structured
+
+Searchable
+
+Contextual
+
+Privacy-aware
+
+
+Useful fields may include:
+
+timestamp
+level
+request_id
+tenant_id
+user_id
+module
+operation
+duration
+status
+error_code
+
+Sensitive personal data should not be logged unnecessarily.
+
+
+---
+
+8.41 Logging Levels
+
+Typical levels:
+
+DEBUG
+INFO
+WARN
+ERROR
+FATAL
+
+Production logging should avoid excessive DEBUG output unless temporarily enabled for controlled troubleshooting.
+
+
+---
+
+8.42 Database Query Standards
+
+Database access should:
+
+Use parameterized queries
+
+Avoid unnecessary queries
+
+Use indexes appropriately
+
+Respect tenant filtering
+
+Avoid N+1 query patterns
+
+Handle large datasets with pagination
+
+
+Potentially expensive queries should be measured.
+
+
+---
+
+8.43 N+1 Query Prevention
+
+Example problem:
+
+Load 100 students
+    |
+    +---- query attendance
+    +---- query attendance
+    +---- query attendance
+    ...
+
+Prefer batching or appropriate joins:
+
+Load students
+      |
+      v
+Load required attendance data efficiently
+
+The implementation depends on the ORM/database strategy.
+
+
+---
+
+8.44 Frontend State Management
+
+Frontend state should distinguish between:
+
+Server State
+
+Data owned by the backend.
+
+Examples:
+
+Students
+
+Courses
+
+Attendance
+
+Messages
+
+
+Local UI State
+
+Examples:
+
+Modal open/closed
+
+Selected tab
+
+Form state
+
+
+Offline State
+
+Examples:
+
+Pending mutations
+
+Local records
+
+Sync status
+
+Conflict state
+
+
+Mixing these categories unnecessarily can create difficult-to-debug behavior.
+
+
+---
+
+8.45 Offline Development Rules
+
+Offline-capable features should explicitly define:
+
+Local schema
+
+Cached data
+
+Pending mutations
+
+Sync triggers
+
+Retry behavior
+
+Conflict handling
+
+User-visible sync status
+
+
+A feature should not be labeled "offline-ready" simply because the UI loads without a network connection.
+
+
+---
+
+8.46 AI Development Rules
+
+AI functionality should define:
+
+Input
+
+Output
+
+Model requirements
+
+Context
+
+Permissions
+
+Safety checks
+
+Cost expectations
+
+Failure behavior
+
+Evaluation criteria
+
+
+AI features must not bypass existing authorization.
+
+
+---
+
+8.47 Media Development Rules
+
+Media features should consider:
+
+File size
+
+Encoding
+
+Streaming
+
+Bandwidth
+
+Offline availability
+
+Access control
+
+Copyright/rights metadata
+
+Storage lifecycle
+
+
+Audio and video should not automatically be downloaded at maximum quality.
+
+
+---
+
+8.48 Accessibility Development
+
+Accessibility should be considered during implementation.
+
+Teams should check:
+
+Keyboard navigation
+
+Screen-reader semantics
+
+Color contrast
+
+Focus management
+
+Form labels
+
+Error messaging
+
+Touch target size
+
+Reduced motion
+
+Text scaling
+
+
+Accessibility is part of product quality.
+
+
+---
+
+8.49 Internationalization Development
+
+All user-visible strings should be localizable.
+
+Avoid hardcoding:
+
+Welcome back
+
+directly into application logic.
+
+Prefer localization keys:
+
+dashboard.welcome_back
+
+RTIQA should support:
+
+Arabic
+
+English
+
+RTL
+
+LTR
+
+Locale-aware dates
+
+Locale-aware numbers
+
+Locale-aware currencies
+
+
+
+---
+
+8.50 Arabic and RTL Quality
+
+RTL support should cover:
+
+Layout
+
+Navigation
+
+Tables
+
+Forms
+
+Icons where direction matters
+
+Pagination
+
+Charts
+
+Dialogs
+
+Notifications
+
+Mobile interfaces
+
+
+RTL should not be treated as a simple text-direction switch.
+
+
+---
+
+8.51 Testing During Development
+
+Developers should test changes before opening a Pull Request.
+
+At minimum:
+
+Format
+   |
+   v
+Lint
+   |
+   v
+Type Check
+   |
+   v
+Unit Tests
+   |
+   v
+Integration Tests
+
+The exact pipeline depends on the technology stack.
+
+
+---
+
+8.52 Local Development
+
+A new developer should be able to understand:
+
+1. Required tools
+
+
+2. Environment variables
+
+
+3. Database setup
+
+
+4. How to start the application
+
+
+5. How to run tests
+
+
+6. How to run linting
+
+
+7. How to create migrations
+
+
+8. How to contribute changes
+
+
+
+The onboarding process should be documented.
+
+
+---
+
+8.53 Reproducible Development
+
+Development environments should minimize "works on my machine" problems.
+
+Use:
+
+Version-pinned dependencies
+
+Lock files
+
+Containerized services where useful
+
+Documented runtime versions
+
+Automated setup scripts
+
+
+
+---
+
+8.54 Local Development Architecture
+
+A typical development environment may resemble:
+
+Developer Machine
+      |
+      +---- Web
+      |
+      +---- API
+      |
+      +---- Worker
+      |
+      +---- Database
+      |
+      +---- Cache
+      |
+      +---- Object Storage
+      |
+      +---- AI Gateway / Mock
+
+External services may be mocked during local development where appropriate.
+
+
+---
+
+8.55 Mocking External Services
+
+External dependencies should be mockable where practical.
+
+Examples:
+
+AI providers
+
+Payment gateways
+
+Email
+
+Push notifications
+
+SMS
+
+External identity
+
+Broadcast services
+
+
+This allows tests to remain:
+
+Fast
+
+Deterministic
+
+Cost-efficient
+
+Independent of external availability
+
+
+
+---
+
+8.56 Test Data
+
+Development and testing should use synthetic or anonymized data.
+
+Example:
+
+Student:
+Test Student 001
+
+Email:
+student001@example.test
+
+Production personal information must not be casually reused for development.
+
+
+---
+
+8.57 Database Seed Data
+
+Development environments may provide seed data for:
+
+Tenant
+
+Institution
+
+Admin
+
+Teacher
+
+Student
+
+Parent
+
+Course
+
+Lesson
+
+Attendance
+
+Assessment
+
+
+Seed data should be deterministic where possible.
+
+
+---
+
+8.58 Migration Workflow
+
+Schema changes should follow:
+
+Modify Schema
+     |
+     v
+Create Migration
+     |
+     v
+Run Locally
+     |
+     v
+Run Tests
+     |
+     v
+Review
+     |
+     v
+Run in Staging
+     |
+     v
+Production Migration
+
+Production migrations should be planned for rollback or forward-fix where appropriate.
+
+
+---
+
+8.59 Dependency Updates
+
+Dependency updates should be performed deliberately.
+
+For each significant update:
+
+Review changelog
+
+Check breaking changes
+
+Run tests
+
+Check security advisories
+
+Check performance
+
+Review generated lockfile changes
+
+
+Avoid uncontrolled mass dependency upgrades.
+
+
+---
+
+8.60 Automated Formatting
+
+The project should use automated formatting.
+
+Developers should not spend code-review time arguing about trivial formatting differences.
+
+Formatting should be enforced automatically where practical.
+
+
+---
+
+8.61 Static Analysis
+
+Static analysis may detect:
+
+Type errors
+
+Unused code
+
+Security issues
+
+Complexity
+
+Dependency problems
+
+Common programming mistakes
+
+
+Static analysis should complement, not replace, human review.
+
+
+---
+
+8.62 Pre-Commit Checks
+
+Optional local checks may include:
+
+format
+lint
+typecheck
+unit tests
+secret detection
+
+Fast checks should run locally.
+
+More expensive checks can run in CI.
+
+
+---
+
+8.63 CI Development Expectations
+
+Every Pull Request should trigger appropriate automated checks.
+
+Typical pipeline:
+
+Pull Request
+     |
+     +---- Install
+     |
+     +---- Format Check
+     |
+     +---- Lint
+     |
+     +---- Type Check
+     |
+     +---- Unit Tests
+     |
+     +---- Integration Tests
+     |
+     +---- Security Checks
+     |
+     +---- Build
+
+
+---
+
+8.64 Review Approval
+
+Protected branches should require appropriate review before merging.
+
+The required number of reviewers may vary according to project maturity.
+
+Security-sensitive changes should receive additional review when necessary.
+
+
+---
+
+8.65 Merge Strategy
+
+Possible strategies include:
+
+Squash merge
+
+Rebase merge
+
+Merge commit
+
+
+The project should select one consistent default.
+
+Squashing focused Pull Requests can help maintain a readable project history.
+
+
+---
+
+8.66 Release Branches
+
+Release branches may be used when the project requires parallel stabilization.
+
+Example:
+
+main
+ |
+ +---- release/1.0
+ |
+ +---- release/1.1
+
+Small teams may not need long-lived release branches.
+
+
+---
+
+8.67 Tags
+
+Production releases should be tagged.
+
+Example:
+
+v0.1.0
+v0.2.0
+v1.0.0
+v1.1.0
+
+Tags should point to known validated commits.
+
+
+---
+
+8.68 Semantic Versioning
+
+Where applicable, RTIQA may use:
+
+MAJOR.MINOR.PATCH
+
+For example:
+
+1.4.2
+
+Conceptually:
+
+MAJOR — breaking changes
+
+MINOR — backward-compatible features
+
+PATCH — backward-compatible fixes
+
+
+The exact release policy should be documented.
+
+
+---
+
+8.69 Changelog
+
+Important releases should document:
+
+Added features
+
+Improvements
+
+Bug fixes
+
+Security fixes
+
+Breaking changes
+
+Deprecations
+
+Migration requirements
+
+
+Example:
+
+## [1.2.0]
+
+### Added
+- Offline attendance
+- Parent notifications
+
+### Improved
+- Student search performance
+
+### Fixed
+- Duplicate synchronization records
+
+### Security
+- Improved session validation
+
+
+---
+
+8.70 Deprecation Policy
+
+Features and APIs should not disappear unexpectedly.
+
+Deprecation should generally include:
+
+1. Announcement
+
+
+2. Documentation
+
+
+3. Replacement guidance
+
+
+4. Migration period
+
+
+5. Removal
+
+
+
+Critical security vulnerabilities may require accelerated removal.
+
+
+---
+
+8.71 Code Ownership and Review Rules
+
+Sensitive areas may require dedicated reviewers.
+
+Examples:
+
+security/
+auth/
+payments/
+multi-tenancy/
+offline-sync/
+ai/
+infrastructure/
+
+The repository may use ownership rules to automatically request appropriate reviewers.
+
+
+---
+
+8.72 Generated Code
+
+Generated code should be clearly identified.
+
+Examples:
+
+API clients
+
+Database models
+
+Type definitions
+
+Localization artifacts
+
+
+Generated files should not be manually edited if regeneration is expected.
+
+The generation process must be documented.
+
+
+---
+
+8.73 AI-Assisted Development
+
+AI coding assistants may be used by the development team.
+
+However:
+
+> Generated code is not automatically trusted code.
+
+
+
+AI-generated code must undergo the same:
+
+Review
+
+Testing
+
+Security analysis
+
+Licensing review
+
+Architecture validation
+
+
+as manually written code.
+
+
+---
+
+8.74 AI Coding Rules
+
+AI-assisted development should never be used to bypass:
+
+Authentication
+
+Authorization
+
+Tenant isolation
+
+Security review
+
+Testing
+
+Code review
+
+Documentation
+
+
+Developers remain responsible for the resulting code.
+
+
+---
+
+8.75 Large Changes
+
+Large architectural changes should be split into stages.
+
+Example:
+
+Architecture
+    |
+    v
+Data Model
+    |
+    v
+Backend
+    |
+    v
+API
+    |
+    v
+Frontend
+    |
+    v
+Offline
+    |
+    v
+Testing
+    |
+    v
+Deployment
+
+This makes failures easier to isolate.
+
+
+---
+
+8.76 Experimental Work
+
+Experimental features should be isolated.
+
+Possible approaches:
+
+Feature flags
+
+Experimental branches
+
+Prototype modules
+
+Internal environments
+
+
+Experimental functionality should not silently become production behavior.
+
+
+---
+
+8.77 Breaking Changes
+
+Before introducing a breaking change, determine:
+
+Who is affected?
+
+Which APIs are affected?
+
+Which clients are affected?
+
+Which tenants are affected?
+
+Is migration required?
+
+Can compatibility be maintained temporarily?
+
+How will rollback work?
+
+
+
+---
+
+8.78 Production Hotfixes
+
+Critical production fixes should follow a controlled process.
+
+Incident
+   |
+   v
+Diagnosis
+   |
+   v
+Hotfix
+   |
+   v
+Focused Testing
+   |
+   v
+Review
+   |
+   v
+Deployment
+   |
+   v
+Verification
+   |
+   v
+Root Cause Analysis
+
+A hotfix should not permanently bypass normal engineering standards.
+
+
+---
+
+8.79 Post-Incident Engineering
+
+Significant incidents should produce:
+
+Root cause
+
+Impact assessment
+
+Timeline
+
+Corrective action
+
+Preventive action
+
+Monitoring improvements
+
+Test coverage improvements
+
+Documentation updates
+
+
+The objective is system improvement, not blame.
+
+
+---
+
+8.80 Development Metrics
+
+Useful engineering metrics may include:
+
+Lead time for changes
+
+Deployment frequency
+
+Change failure rate
+
+Mean time to recovery
+
+Test stability
+
+Build duration
+
+Review duration
+
+Defect escape rate
+
+
+Metrics should improve engineering decisions rather than become targets that encourage unhealthy behavior.
+
+
+---
+
+8.81 Repository Health
+
+The repository should periodically be reviewed for:
+
+Outdated dependencies
+
+Dead code
+
+Unused branches
+
+Broken documentation
+
+Stale feature flags
+
+Technical debt
+
+Security alerts
+
+Large files
+
+Build performance
+
+Test reliability
+
+
+Repository maintenance is part of engineering work.
+
+
+---
+
+8.82 Documentation and Code Synchronization
+
+Documentation should evolve with the implementation.
+
+If an architectural behavior changes, the relevant documentation should be updated in the same change or tracked immediately.
+
+Outdated documentation can be as harmful as incorrect code.
+
+
+---
+
+8.83 Engineering Communication
+
+Important technical decisions should be written down.
+
+Avoid relying exclusively on:
+
+Private messages
+
+Verbal discussions
+
+Temporary chat messages
+
+Individual memory
+
+
+The repository should preserve important project knowledge.
+
+
+---
+
+8.84 Onboarding New Developers
+
+A new developer should be able to answer:
+
+What is RTIQA?
+        |
+        v
+How is it architected?
+        |
+        v
+Where is each module?
+        |
+        v
+How do I run it?
+        |
+        v
+How do I test it?
+        |
+        v
+How do I submit changes?
+        |
+        v
+How are releases deployed?
+
+This information should be documented.
+
+
+---
+
+8.85 Contributor Expectations
+
+Contributors should:
+
+Read the architecture documentation
+
+Follow coding standards
+
+Respect module boundaries
+
+Protect sensitive data
+
+Add tests
+
+Update documentation
+
+Explain significant design decisions
+
+Avoid unnecessary dependencies
+
+Follow the review process
+
+
+
+---
+
+8.86 Engineering Quality Gates
+
+Before merging a major feature:
+
+[ ] Requirements complete
+[ ] Architecture reviewed
+[ ] Code reviewed
+[ ] Tests pass
+[ ] Security reviewed
+[ ] Tenant isolation verified
+[ ] Offline behavior verified where required
+[ ] Performance considered
+[ ] Documentation updated
+[ ] CI passes
+
+
+---
+
+8.87 Development Workflow Summary
+
+The preferred RTIQA workflow is:
+
+PRODUCT REQUIREMENT
+                       |
+                       v
+                SPECIFICATION
+                       |
+                       v
+               ARCHITECTURE
+                  REVIEW
+                       |
+                       v
+                 DEVELOPMENT
+                       |
+          +------------+------------+
+          |            |            |
+          v            v            v
+       Testing     Security     Documentation
+          |            |            |
+          +------------+------------+
+                       |
+                       v
+                  CODE REVIEW
+                       |
+                       v
+                      CI
+                       |
+                       v
+                   STAGING
+                       |
+                       v
+                 PRODUCTION
+                       |
+                       v
+                 OBSERVABILITY
+                       |
+                       v
+                 FEEDBACK LOOP
+                       |
+                       +---------> NEXT ITERATION
+
+
+---
+
+8.88 Final Development Principle
+
+RTIQA should be developed with the assumption that:
+
+> Every line of code may eventually need to be maintained, secured, tested, migrated, observed, and operated by someone other than its original author.
+
+
+
+Therefore the engineering process should optimize for:
+
+Clarity
+
+Reliability
+
+Security
+
+Reproducibility
+
+Documentation
+
+Reviewability
+
+Long-term maintainability
+
+
+The objective is not simply to make RTIQA work.
+
+The objective is to make RTIQA remain understandable and reliable as it grows.
